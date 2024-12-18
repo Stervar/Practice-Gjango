@@ -41,3 +41,15 @@ Including another URLconf
 #     path("", views.index),  
 #     path('admin_information', views.admin_information),
 # ]
+
+
+
+# Задание №3
+
+# from django.urls import path
+# from hello import views
+  
+# urlpatterns = [
+#     path("", views.index),
+#     path("user/<name>/<int:age>", views.user),
+# ]
