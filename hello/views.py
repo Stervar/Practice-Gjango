@@ -293,14 +293,38 @@
 # Также мы можем указать для определенных параметров значения по умолчанию:
 
 
-from django.http import HttpResponse
+# from django.http import HttpResponse
    
-def index(request):
-    return HttpResponse("<h2>Главная</h2>")
+# def index(request):
+#     return HttpResponse("<h2>Главная</h2>")
 
-def user(request, name="Undefined", age =0):
-    return HttpResponse(f"<h2>Имя: {name}  Возраст: {age}</h2>")
+# def user(request, name="Undefined", age =0):
+#     return HttpResponse(f"<h2>Имя: {name}  Возраст: {age}</h2>")
 
 
 
 # # http://127.0.0.1:8000/user/Tom/38
+
+
+
+
+# Задание №7
+
+
+
+# from django.http import HttpResponse
+ 
+# def index(request):
+#     return HttpResponse("Главная страница")
+ 
+# def products(request):
+#     return HttpResponse("Список товаров")
+ 
+# def new(request):
+#     return HttpResponse("Новые товары")
+ 
+# def top(request):
+#     return HttpResponse("Наиболее популярные товары")
+
+
+# # /products/top
