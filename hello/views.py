@@ -8,3 +8,4 @@ def about(request):
  
 def contact(request):
     return HttpResponse("<h2>Контакты</h2>")
+
