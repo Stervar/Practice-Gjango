@@ -151,3 +151,36 @@ Including another URLconf
 
 
 # # /products/top
+
+
+
+
+
+
+# Задание №8
+
+# Получение параметров
+
+
+
+# from django.urls import path, include
+# from hello import views
+ 
+# product_patterns = [
+#     path("", views.products),
+#     path("comments", views.comments),
+#     path("questions", views.questions),
+# ]
+ 
+# urlpatterns = [
+#     path("", views.index),
+#     path("products/<int:id>/", include(product_patterns)),
+# ]
+
+
+
+# # /products/6/
+
+# # /products/6/comments
+
+# # /products/6/questions
