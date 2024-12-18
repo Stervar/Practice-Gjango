@@ -72,3 +72,19 @@ Including another URLconf
 # ]
 
 # # http://127.0.0.1:8000/user/Tom/38
+
+
+
+
+
+
+# Задание №5
+
+
+# from django.urls import path, re_path
+# from hello import views
+  
+# urlpatterns = [
+#     path("", views.index),
+#     re_path(r"^user/(?P<name>\D+)/(?P<age>\d+)", views.user),
+# ]
