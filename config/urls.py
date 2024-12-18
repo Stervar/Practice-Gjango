@@ -59,6 +59,9 @@ Including another URLconf
 
 
 
+
+
+
 # Задание №4
 
 # from django.urls import path
@@ -78,7 +81,14 @@ Including another URLconf
 
 
 
+
+
+
+
 # Задание №5
+
+# Определение параметров через функцию re_path
+
 
 
 # from django.urls import path, re_path
@@ -88,3 +98,30 @@ Including another URLconf
 #     path("", views.index),
 #     re_path(r"^user/(?P<name>\D+)/(?P<age>\d+)", views.user),
 # ]
+
+
+
+
+
+
+
+
+# Задание №6
+
+# Также мы можем указать для определенных параметров значения по умолчанию:
+
+
+
+from django.urls import path, re_path
+from hello import views
+  
+urlpatterns = [
+    path("", views.index),
+    re_path(r"^user/(?P<name>\D+)/(?P<age>\d+)", views.user),
+    re_path(r"^user/(?P<name>\D+)", views.user),
+    re_path(r"^user", views.user),
+]
+
+
+
+# # http://127.0.0.1:8000/user/Tom/38
