@@ -184,3 +184,28 @@ Including another URLconf
 # # /products/6/comments
 
 # # /products/6/questions
+
+
+
+
+
+
+
+
+
+
+# Переадресация и отправка статусных кодов
+
+# Задание №9
+
+
+
+from django.urls import path
+from hello import views
+  
+urlpatterns = [
+    path("", views.index),
+    path("about/", views.about),
+    path("contact/", views.contact),
+    path("details/", views.details),
+]
