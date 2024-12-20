@@ -281,6 +281,105 @@ Including another URLconf
 
 
 
+# document.addEventListener('DOMContentLoaded', function() {
+#     // Трекинг времени взаимодействия
+#     let startTime = Date.now();
+    
+#     function trackAction(actionType) {
+#         const trackData = {
+#             action_id: `action_${Date.now()}`,
+#             action_type: actionType,
+#             start_time: startTime,
+#             duration: Date.now() - startTime,
+#             additional_info: {
+#                 screen_width: window.screen.width,
+#                 screen_height: window.screen.height,
+#                 color_depth: window.screen.colorDepth,
+#                 pixel_ratio: window.devicePixelRatio,
+#                 timezone_offset: new Date().getTimezoneOffset(),
+#                 referrer: document.referrer,
+#                 page_url: window.location.href
+#             }
+#         };
+
+#         fetch('/track-action/', {
+#             method: 'POST',
+#             headers: {
+#                 'Content-Type': 'application/json',
+#             },
+#             body: JSON.stringify(trackData)
+#         })
+#         .then(response => response.json())
+#         .then(data => console.log('Действие отслежено:', data))
+#         .catch(error => console.error('Ошибка трекинга:', error));
+#     }
+
+#     // Примеры трекинга различных действий
+#     document.addEventListener('click', () => trackAction('click'));
+#     document.addEventListener('scroll', () => trackAction('scroll'));
+# });
+
+
+
+
+
+
+
+
+
+# Задание №12
+
+#Получение информации через cookie
+    # и полная визуализация для более удобного использования
+
+# from django.urls import path
+# from django.views.generic import TemplateView
+# from django.contrib.auth.decorators import login_required, user_passes_test
+# from hello import views
+
+# def is_staff_or_superuser(user):
+#     """
+#     Проверка, является ли пользователь сотрудником или суперпользователем
+#     """
+#     return user.is_staff or user.is_superuser
+
+# urlpatterns = [
+#     # Главная страница с куки-баннером
+#     path('', views.home, name='home'),
+    
+#     # Обработчик согласия на куки (без аутентификации)
+#     path('set-cookie-consent/', 
+#          views.set_cookie_consent, 
+#          name='set_cookie_consent'),
+    
+#     # Трекинг действий пользователя (с проверкой согласия на куки)
+#     path('track-action/', 
+#          views.track_action, 
+#          name='track_action'),
+    
+#     # Страница аналитики (только для авторизованных пользователей)
+#     path('analytics/', 
+#          login_required(views.analytics_view), 
+#          name='analytics'),
+    
+#     # Статические страницы с политикой куки (публичный доступ)
+#     path('cookie-policy/', 
+#          TemplateView.as_view(template_name='cookie_policy.html'), 
+#          name='cookie_policy'),
+    
+#     # Страница настроек куки (только для авторизованных)
+#     path('cookie-settings/', 
+#          login_required(TemplateView.as_view(template_name='cookie_settings.html')), 
+#          name='cookie_settings'),
+    
+#     # REST-эндпоинт статистики (только для персонала)
+#     path('api/cookie-stats/', 
+#          user_passes_test(is_staff_or_superuser)(views.cookie_stats_view), 
+#          name='cookie_stats'),
+# ]
+
+
+
 
 
 
