@@ -327,6 +327,7 @@ Including another URLconf
 
 
 
+
 # Задание №12
 
 #Получение информации через cookie
