@@ -251,8 +251,30 @@ Including another URLconf
 
 
 
+# from django.urls import path
+# from hello import views
+  
+# urlpatterns = [
+#     path("", views.index),]
+
+
+
+
+
+
+# Отправка и получение куки
+
+
+# Задание №11
+
+
 from django.urls import path
 from hello import views
-  
+
 urlpatterns = [
-    path("", views.index),]
+    path("", views.home),
+    path('set-cookies/', views.set_cookie_view, name='set_cookies'),
+    path('get-cookies/', views.get_cookie_view, name='get_cookies'),
+    path('delete-cookies/', views.delete_cookie_view, name='delete_cookies'),
+    path('complex-cookies/', views.complex_cookie_view, name='complex_cookies'),
+]

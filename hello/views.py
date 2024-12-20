@@ -443,29 +443,284 @@
 
 
 
-from django.http import JsonResponse
-from django.core.serializers.json import DjangoJSONEncoder
+# from django.http import JsonResponse
+# from django.core.serializers.json import DjangoJSONEncoder
  
-def index(request):
-    bob = Person("Bob", 41)
-    return JsonResponse(bob, safe=False, encoder=PersonEncoder)
+# def index(request):
+#     bob = Person("Bob", 41)
+#     return JsonResponse(bob, safe=False, encoder=PersonEncoder)
  
-class Person:
+# class Person:
   
-    def __init__(self, name, age):
-        self.name = name    # имя человека
-        self.age = age        # возраст человека
+#     def __init__(self, name, age):
+#         self.name = name    # имя человека
+#         self.age = age        # возраст человека
  
-class PersonEncoder(DjangoJSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Person):
-            return {"name": obj.name, "age": obj.age}
-            # return obj.__dict__
-        return super().default(obj)
+# class PersonEncoder(DjangoJSONEncoder):
+#     def default(self, obj):
+#         if isinstance(obj, Person):
+#             return {"name": obj.name, "age": obj.age}
+#             # return obj.__dict__
+#         return super().default(obj)
 
 
 
 
 
 
-Отправка и получение куки
+
+
+
+
+
+
+
+
+# Задание №11
+
+
+# Отправка и получение куки
+
+
+
+# from django.shortcuts import render
+# from django.http import HttpResponse
+# from datetime import timedelta, datetime
+# import json
+
+# def home(request):
+#     """
+#     Главная страница с навигацией по функциям куки
+#     """
+#     html_content = '''
+#     <!DOCTYPE html>
+#     <html>
+#     <head>
+#         <title>Управление куки</title>
+#         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+#     </head>
+#     <body>
+#         <div class="container mt-5">
+#             <h1 class="mb-4">Демонстрация работы с куки</h1>
+#             <div class="list-group">
+#                 <a href="/set-cookies/" class="list-group-item list-group-item-action">
+#                     Установка куки
+#                 </a>
+#                 <a href="/get-cookies/" class="list-group-item list-group-item-action">
+#                     Просмотр куки
+#                 </a>
+#                 <a href="/delete-cookies/" class="list-group-item list-group-item-action">
+#                     Удаление куки
+#                 </a>
+#                 <a href="/complex-cookies/" class="list-group-item list-group-item-action">
+#                     Расширенные настройки куки
+#                 </a>
+#             </div>
+#         </div>
+#     </body>
+#     </html>
+#     '''
+#     return HttpResponse(html_content)
+
+# def set_cookie_view(request):
+#     """
+#     Демонстрация установки куки с различными параметрами
+#     """
+#     response = HttpResponse('''
+#     <!DOCTYPE html>
+#     <html>
+#     <head>
+#         <title>Установка куки</title>
+#         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+#     </head>
+#     <body>
+#         <div class="container mt-5">
+#             <h1>Установка куки</h1>
+#             <div class="alert alert-success">
+#                 Куки были установлены с различными параметрами
+#             </div>
+#             <div class="mt-3">
+#                 <a href="/get-cookies/" class="btn btn-primary me-2">Просмотр куки</a>
+#                 <a href="/" class="btn btn-secondary">На главную</a>
+#             </div>
+#         </div>
+#     </body>
+#     </html>
+#     ''')
+
+#     # 1. Базовая куки
+#     response.set_cookie('user_id', '12345')
+
+#     # 2. Куки с временем жизни
+#     response.set_cookie(
+#         key='session_token', 
+#         value='abc123xyz',
+#         max_age=timedelta(hours=2)  # Живет 2 часа
+#     )
+
+#     # 3. Защищенная куки
+#     response.set_cookie(
+#         key='auth_token',
+#         value='secure_token_123',
+#         secure=True,      # Только https
+#         httponly=True,    # Защита от XSS
+#         samesite='Lax'    # Безопасность cross-site
+#     )
+
+#     # 4. Куки сложным JSON-значением
+#     user_data = {
+#         'username': 'john_doe',
+#         'email': 'john@example.com',
+#         'roles': ['user', 'admin']
+#     }
+#     response.set_cookie(
+#         key='user_profile',
+#         value=json.dumps(user_data),
+#         max_age=timedelta(days=7)
+#     )
+
+#     return response
+
+# def get_cookie_view(request):
+#     """
+#     Получение и отображение всех куки
+#     """
+#     # Получаем все куки
+#     all_cookies = request.COOKIES
+
+#     # Подготовка данных для таблицы
+#     cookie_rows = []
+#     for key, value in all_cookies.items():
+#         try:
+#             # Пытаемся распарсить JSON
+#             parsed_value = json.loads(value)
+#             formatted_value = json.dumps(parsed_value, indent=2)
+#         except (json.JSONDecodeError, TypeError):
+#             formatted_value = value
+
+#         cookie_rows.append({
+#             'key': key,
+#             'value': formatted_value
+#         })
+
+#     # Генерация HTML
+#     cookie_table_html = "".join([
+#         f"""
+#         <tr>
+#             <td>{row['key']}</td>
+#             <td><pre>{row['value']}</pre></td>
+#         </tr>
+#         """ for row in cookie_rows
+#     ])
+
+#     response_html = f'''
+#     <!DOCTYPE html>
+#     <html>
+#     <head>
+#         <title>Список куки</title>
+#         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+#         <style>
+#             pre {{ 
+#                 background-color: #f4f4f4;
+#                 padding: 10px;
+#                 border-radius: 5px;
+#             }}
+#         </style>
+#     </head>
+#     <body>
+#         <div class="container mt-5">
+#             <h1>Установленные куки</h1>
+#             <table class="table table-bordered">
+#                 <thead>
+#                     <tr>
+#                         <th>Ключ</th>
+#                         <th>Значение</th>
+#                     </tr>
+#                 </thead>
+#                 <tbody>
+#                     {cookie_table_html}
+#                 </tbody>
+#             </table>
+#             <div class="mt-3">
+#                 <a href="/delete-cookies/" class="btn btn-danger me-2">Удалить все куки</a>
+#                 <a href="/" class="btn btn-secondary">На главную</a>
+#             </div>
+#         </div>
+#     </body>
+#     </html>
+#     '''
+    
+#     return HttpResponse(response_html)
+
+# def delete_cookie_view(request):
+#     """
+#     Удаление куки
+#     """
+#     response = HttpResponse('''
+#     <!DOCTYPE html>
+#     <html>
+#     <head>
+#         <title>Удаление куки</title>
+#         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+#     </head>
+#     <body>
+#         <div class="container mt-5">
+#             <h1>Куки удалены</h1>
+#             <div class="alert alert-warning">
+#                 Все установленные куки были удалены
+#             </div>
+#             <div class="mt-3">
+#                 <a href="/" class="btn btn-primary">На главную</a>
+#             </div>
+#         </div>
+#     </body>
+#     </html>
+#     ''')
+    
+#     # Получаем список всех текущих куки
+#     cookies = request.COOKIES
+
+#     # Удаляем каждую куки
+#     for key in cookies.keys():
+#         response.delete_cookie(key)
+
+#     return response
+
+# def complex_cookie_view(request):
+#     """
+#     Расширенные настройки куки с подробной информацией
+#     """
+#     response = HttpResponse('''
+#     <!DOCTYPE html>
+#     <html>
+#     <head>
+#         <title>Расширенные настройки куки</title>
+#         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+#     </head>
+#     <body>
+#         <div class="container mt-5">
+#             <h1>Расширенные настройки куки</h1>
+#             <div class="card">
+#                 <div class="card-body">
+#                     <h5 class="card-title">Установл енные куки с расширенными параметрами</h5>
+#                     <p class="card-text">Куки были установлены с параметрами безопасности и ограничениями.</p>
+#                     <a href="/get-cookies/" class="btn btn-primary">Просмотр куки</a>
+#                     <a href="/" class="btn btn-secondary">На главную</a>
+#                 </div>
+#             </div>
+#         </div>
+#     </body>
+#     </html>
+#     ''')
+
+#     # Установка защищенной куки с расширенными параметрами
+#     response.set_cookie(
+#         key='secure_session',
+#         value='session_token_456',
+#         max_age=timedelta(days=7),  # Живет 7 дней
+#         secure=True,                # Только https
+#         httponly=True,              # Защита от XSS
+#         samesite='Strict'           # Строгие ограничения cross-site
+#     )
+
+#     return response
