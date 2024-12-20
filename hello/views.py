@@ -724,3 +724,508 @@
 #     )
 
 #     return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Задание №12
+
+#Получение информации через cookie
+    # и полная визуализация для более удобного использования
+
+
+# from django.shortcuts import render
+# from django.http import HttpResponse, JsonResponse
+# from django.views.decorators.http import require_http_methods
+# import json
+
+# def home(request):
+#     # Проверяем согласие на куки
+#     cookie_consent = request.COOKIES.get('cookie_consent', 'not_set')
+    
+#     html_content = f'''
+#     <!DOCTYPE html>
+#     <html lang="ru">
+#     <head>
+#         <meta charset="UTF-8">
+#         <title>Сайт с управлением куки</title>
+#         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+#         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+#         <style>
+#             #cookie-consent-banner {{
+#                 position: fixed;
+#                 bottom: 20px;
+#                 right: 20px;
+#                 width: 300px;
+#                 background-color: #f8f9fa;
+#                 border-radius: 10px;
+#                 box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+#                 z-index: 1000;
+#                 display: {'' if cookie_consent == 'not_set' else 'none'};
+#             }}
+            
+#             .cookie-icon {{
+#                 position: fixed;
+#                 bottom: 20px;
+#                 right: 20px;
+#                 background-color: #007bff;
+#                 color: white;
+#                 width: 50px;
+#                 height: 50px;
+#                 border-radius: 50%;
+#                 display: flex;
+#                 align-items: center;
+#                 justify-content: center;
+#                 box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+#                 cursor: pointer;
+#                 z-index: 1000;
+#                 display: {'' if cookie_consent == 'not_set' else 'none'};
+#             }}
+
+#             .content-with-cookies {{
+#                 opacity: {0.5 if cookie_consent == 'not_set' else 1};
+#                 pointer-events: {'' if cookie_consent == 'not_set' else 'auto'};
+#                 transition: opacity 0.3s ease;
+#             }}
+#         </style>
+#     </head>
+#     <body>
+#         <!-- Иконка куки -->
+#         <div id="cookie-icon" class="cookie-icon">
+#             <i class="fas fa-cookie-bite"></i>
+#         </div>
+
+#         <!-- Баннер согласия на куки -->
+#         <div id="cookie-consent-banner" class="card">
+#             <div class="card-body">
+#                 <h5 class="card-title">
+#                     <i class="fas fa-cookie-bite me-2"></i> 
+#                     Использование куки
+#                 </h5>
+#                 <p class="card-text">
+#                     Мы используем куки для улучшения работы сайта и персонализации контента. 
+#                     Продолжая использовать сайт, вы соглашаетесь с использованием куки.
+#                 </p>
+#                 <div class="d-flex justify-content-between">
+#                     <button id="manage-cookies" class="btn btn-secondary btn-sm">
+#                         <i class="fas fa-cog me-1"></i> Настроить
+#                     </button>
+#                     <div>
+#                         <button id="reject-cookies" class="btn btn-outline-danger btn-sm me-2">
+#                             <i class="fas fa-times me-1"></i> Отклонить
+#                         </button>
+#                         <button id="accept-cookies" class="btn btn-primary btn-sm">
+#                             <i class="fas fa-check me-1"></i> Принять
+#                         </button>
+#                     </div>
+#                 </div>
+#             </div>
+#         </div>
+
+#         <!-- Основной контент сайта -->
+#         <div id="main-content" class="container mt-5 content-with-cookies">
+#             <h1>Главная страница сайта</h1>
+#             <div class="row">
+#                 <div class="col-md-6">
+#                     <div class="card">
+#                         <div class="card-body">
+#                             <h5 class="card-title">Раздел 1</h5>
+#                             <p class="card-text">
+#                                 Содержимое первого раздела. 
+#                                 {'' if cookie_consent == 'not_set' else 'Контент доступен после согласия с куки.'}
+#                             </p>
+#                         </div>
+#                     </div>
+#                 </div>
+#                 <div class="col-md-6">
+#                     <div class="card">
+#                         <div class="card-body">
+#                             <h5 class="card-title">Раздел 2</h5>
+#                             <p class="card-text">
+#                                 Содержимое второго раздела. 
+#                                 {'' if cookie_consent == 'not_set' else 'Контент доступен после согласия с куки.'}
+#                             </p>
+#                         </div>
+#                     </div>
+#                 </div>
+#             </div>
+#         </div>
+
+#         <script>
+#             document.addEventListener('DOMContentLoaded', function() {{
+#                 const banner = document.getElementById('cookie-consent-banner');
+#                 const cookieIcon = document.getElementById('cookie-icon');
+#                 const mainContent = document.getElementById('main-content');
+#                 const acceptBtn = document.getElementById('accept-cookies');
+#                 const rejectBtn = document.getElementById('reject-cookies');
+#                 const manageBtn = document.getElementById('manage-cookies');
+
+#                 // Показ баннера по клику на иконку
+#                 cookieIcon.addEventListener('click', () => {{
+#                     cookieIcon.style.display = 'none';
+#                     banner.style.display = 'block';
+#                 }});
+
+#                 function setCookieConsent(consent, options = {{}}) {{
+#                     fetch('/set-cookie-consent/', {{
+#                         method: 'POST',
+#                         headers: {{
+#                             'Content-Type': 'application/json',
+#                             'X-CSRFToken': getCookie('csrftoken')
+#                         }},
+#                         body: JSON.stringify({{ 
+#                             'consent': consent, 
+#                             'options': options 
+#                         }})
+#                     }})
+#                     .then(response => response.json())
+#                     .then(data => {{
+#                         if (data.status === 'success') {{
+#                             // Скрываем баннер и иконку
+#                             banner.style.display = 'none';
+#                             cookieIcon.style.display = 'none';
+                            
+#                             // Возвращаем полную интерактивность контенту
+#                             mainContent.style.opacity = '1';
+#                             mainContent.style.pointerEvents = 'auto';
+#                         }}
+#                     }});
+#                 }}
+
+#                 // Обработчики кнопок
+#                 acceptBtn.addEventListener('click', () => setCookieConsent(true, {{
+#                     analytics: true,
+#                     marketing: true
+#                 }}));
+
+#                 rejectBtn.addEventListener('click', () => setCookieConsent(false));
+
+#                 manageBtn.addEventListener('click', () => {{
+#                     // Здесь можно реализовать модальное окно с детальными настройками куки
+#                     alert('Функция настройки куки в разработке');
+#                 }});
+
+#                 // Функция получения куки (для CSRF)
+#                 function getCookie(name) {{
+#                     let cookieValue = null;
+#                     if (document.cookie && document.cookie !== '') {{
+#                         const cookies = document.cookie.split(';');
+#                         for (let i = 0; i < cookies.length; i++) {{
+#                             const cookie = cookies[i].trim();
+#                             if (cookie.substring(0, name.length +  1) === (name + '=')) {{
+#                                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+#                                 break;
+#                             }}
+#                         }}
+#                     }}
+#                     return cookieValue;
+#                 }}
+#             }});
+#         </script>
+#     </body>
+#     </html>
+#     '''
+#     return HttpResponse(html_content)
+
+# @require_http_methods(["POST"])
+# def set_cookie_consent(request):
+#     """
+#     Обработчик для установки согласия на куки
+#     """
+#     try:
+#         data = json.loads(request.body)
+#         consent = data.get('consent', False)
+#         options = data.get('options', {})
+
+#         # Создаем ответ
+#         response = JsonResponse({
+#             'status': 'success', 
+#             'message': 'Настройки куки обновлены'
+#         })
+
+#         # Устанавливаем куки согласия
+#         response.set_cookie(
+#             key='cookie_consent', 
+#             value='accepted' if consent else 'rejected',
+#             max_age=60 * 60 * 24 * 365,  # 1 год
+#             httponly=True,
+#             samesite='Lax'
+#         )
+
+#         return response
+
+#     except Exception as e:
+#         return JsonResponse({
+#             'status': 'error', 
+#             'message': str(e)
+#         }, status=400)
+
+# def analytics_view(request):
+#     """
+#     Пример view с проверкой согласия на куки
+#     """
+#     cookie_consent = request.COOKIES.get('cookie_consent')
+    
+#     if cookie_consent == 'accepted':
+#         # Логика для пользователей, давших согласие
+#         return HttpResponse("Аналитика доступна")
+#     else:
+#         # Страница с предупреждением
+#         return HttpResponse("Для доступа к аналитике необходимо дать согласие на куки")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Задание №13
+
+
+import json
+import platform
+import datetime
+import uuid
+import requests
+import logging
+import os
+import hashlib
+import traceback
+from termcolor import colored
+from django.http import JsonResponse, HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+class UserActivityTracker:
+    @staticmethod
+    def log_action(action_id, client_info, additional_data=None):
+        log_entry = {
+            'timestamp': datetime.datetime.now().isoformat(),
+            'action_id': action_id,
+            'client_info': client_info,
+            'additional_data': additional_data or {}
+        }
+        return log_entry
+
+def get_client_info(request):
+    # Расширенный сбор информации о клиенте
+    return {
+        'network': {
+            'ip_address': request.META.get('REMOTE_ADDR', 'Не определен'),
+            'forwarded_for': request.META.get('HTTP_X_FORWARDED_FOR', 'Отсутствует')
+        },
+        'client': {
+            'user_agent': request.META.get('HTTP_USER_AGENT', 'Не определен'),
+            'browser_info': {
+                'language': request.META.get('HTTP_ACCEPT_LANGUAGE', 'Не определен'),
+                'platform': platform.platform(),
+                'python_version': platform.python_version()
+            }
+        },
+        'system': {
+            'hostname': platform.node(),
+            'system': platform.system(),
+            'release': platform.release()
+        }
+    }
+
+def home(request):
+    # HTML с встроенной кнопкой и JavaScript
+    html_content = """
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>Трекер активности</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #f0f0f0;
+            }
+            .container {
+                text-align: center;
+                background-color: white;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            }
+            #trackButton {
+                background-color: #4CAF50;
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+            #trackButton:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Трекер активности пользователя</h1>
+            <button id="trackButton">Отследить действие</button>
+        </div>
+
+        <script>
+            document.getElementById('trackButton').addEventListener('click', function() {
+                const actionId = `action_${Date.now()}`;
+                
+                const trackData = {
+                    action_id: actionId,
+                    start_time: Date.now(),
+                    additional_info: {
+                        screen_width: window.screen.width,
+                        screen_height: window.screen.height,
+                        color_depth: window.screen.colorDepth,
+                        pixel_ratio: window.devicePixelRatio,
+                        timezone_offset: new Date().getTimezoneOffset()
+                    }
+                };
+
+                fetch('/track-action/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(trackData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Успешно отслежено:', data);
+                    alert(`Действие ${actionId} отслежено!\nПодробности в терминале.`);
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка при отслеживании действия');
+                });
+            });
+        </script>
+    </body>
+    </html>
+    """
+    return HttpResponse(html_content)
+
+@csrf_exempt
+def track_action(request):
+    """
+    Расширенный обработчик для отслеживания действий пользователя с подробным логированием
+    """
+    if request.method != 'POST':
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Требуется POST-запрос'
+        }, status=405)
+
+    try:
+        # Парсинг входящих данных
+        data = json.loads(request.body)
+        action_id = data.get('action_id', 'Не указано')
+        start_time = data.get('start_time', 'Не указано')
+        additional_info = data.get('additional_info', {})
+
+        # Получение информации о клиенте
+        client_info = get_client_info(request)
+
+        # Создание структуры логирования
+        log_info = {
+            'action_id': action_id,
+            'start_time': start_time,
+            'client_info': client_info,
+            'additional_info': additional_info
+        }
+
+        # Визуальный вывод с цветовой индикацией
+        print(colored("\n🔍 ДЕТАЛЬНЫЙ АНАЛИЗ ДЕЙСТВИЯ ПОЛЬЗОВАТЕЛЯ 🔍", 'cyan', attrs=['bold']))
+        
+        # Базовая информация о действии
+        print(colored("\n[ДЕЙСТВИЕ]", 'green'))
+        print(f"➤ ID Действия: {colored(action_id, 'yellow')}")
+        print(f"➤ Время начала: {colored(str(datetime.datetime.fromtimestamp(int(start_time)/1000)), 'yellow')}")
+        
+        # Сетевая информация
+        print(colored("\n[СЕТЕВЫЕ ПАРАМЕТРЫ]", 'green'))
+        network_info = client_info.get('network', {})
+        print(f"➤ IP-адрес: {colored(network_info.get('ip_address', 'Н/Д'), 'yellow')}")
+        print(f"➤ Переадресация: {colored(network_info.get('forwarded_for', 'Отсутствует'), 'yellow')}")
+        
+        # Информация о системе
+        system_info = client_info.get('system', {})
+        print(colored("\n[СИСТЕМНАЯ ИНФОРМАЦИЯ]", 'green'))
+        print(f"➤ Хост: {colored(system_info.get('hostname', 'Н/Д'), 'yellow')}")
+        print(f"➤ Операционная система: {colored(f"{system_info.get('system', 'Н/Д')} {system_info.get('release', '')}", 'yellow')}")
+        
+        # Информация о клиенте
+        client_details = client_info.get('client', {})
+        print(colored("\n[КЛИЕНТСКАЯ ИНФОРМАЦИЯ]", 'green'))
+        print(f"➤ User Agent: {colored(client_details.get('user_agent', 'Н/Д'), 'yellow')}")
+        
+        # Дополнительная информация с клиента
+        print(colored("\n[ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ]", 'green'))
+        print(f"➤ Ширина экрана: {colored(str(additional_info.get('screen_width', 'Н/Д')), 'yellow')}")
+        print(f"➤ Высота экрана: {colored(str(additional_info.get('screen_height', 'Н/Д')), 'yellow')}")
+        print(f"➤ Глубина цвета: {colored(str(additional_info.get('color_depth', 'Н/Д')), 'yellow')}")
+        print(f"➤ Пиксельное соотношение: {colored(str(additional_info.get('pixel_ratio', 'Н/Д')), 'yellow')}")
+        print(f"➤ Смещение часового пояса: {colored(str(additional_info.get('timezone_offset', 'Н/Д')), 'yellow')}")
+
+        # Логирование действия
+        UserActivityTracker.log_action(
+            action_id=action_id, 
+            client_info=client_info, 
+            additional_data={'start_time': start_time, 'additional_info': additional_info}
+        )
+
+        return JsonResponse({
+            'status': 'success', 
+            'message': 'Действие зафиксировано', 
+            'data': log_info
+        })
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'status': 'error',
+            'message': 'Некорректный JSON'
+        }, status=400)
+
+    except Exception as e:
+        print(colored("\n❌ ОШИБКА ПРИ ОБРАБОТКЕ ДЕЙСТВИЯ ❌", 'red', attrs=['bold']))
+        print(colored(f"Тип ошибки: {type(e).__name__}", 'red'))
+        print(colored(f"Описание: {str(e)}", 'red'))
+        traceback.print_exc()
+
+        return JsonResponse({
+            'status': 'error', 
+            'message': str(e)
+        }, status=400)
