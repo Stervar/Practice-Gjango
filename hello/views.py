@@ -386,3 +386,86 @@
  
 # def details(request):
 #     return HttpResponsePermanentRedirect("/")
+
+
+
+
+
+
+
+# Задание №10
+
+
+
+
+# from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseBadRequest
+ 
+ 
+# def index(request, id):
+#     people = ["Tom", "Bob", "Sam"]
+#     # если пользователь найден, возвращаем его
+#     if id in range(0, len(people)):
+#         return HttpResponse(people[id])
+#     # если нет, то возвращаем ошибку 404
+#     else:
+#         return HttpResponseNotFound("Not Found")
+ 
+# def access(request, age):
+#     # если возраст НЕ входит в диапазон 1-110, посылаем ошибку 400
+#     if age not in range(1, 111):
+#         return HttpResponseBadRequest("Некорректные данные")
+#     # если возраст больше 17, то доступ разрешен
+#     if(age > 17):
+#         return HttpResponse("Доступ разрешен")
+#     # если нет, то возвращаем ошибку 403
+#     else:
+#         return HttpResponseForbidden("Доступ заблокирован: недостаточно лет")
+
+
+
+
+
+
+
+
+
+
+
+
+# Отправка json
+
+# Задание №10
+
+
+
+
+
+
+
+
+from django.http import JsonResponse
+from django.core.serializers.json import DjangoJSONEncoder
+ 
+def index(request):
+    bob = Person("Bob", 41)
+    return JsonResponse(bob, safe=False, encoder=PersonEncoder)
+ 
+class Person:
+  
+    def __init__(self, name, age):
+        self.name = name    # имя человека
+        self.age = age        # возраст человека
+ 
+class PersonEncoder(DjangoJSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Person):
+            return {"name": obj.name, "age": obj.age}
+            # return obj.__dict__
+        return super().default(obj)
+
+
+
+
+
+
+Отправка и получение куки

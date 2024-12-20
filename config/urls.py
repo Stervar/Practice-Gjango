@@ -209,3 +209,50 @@ Including another URLconf
 #     path("contact/", views.contact),
 #     path("details/", views.details),
 # ]
+
+
+
+
+
+
+# Задание №10
+
+
+
+
+
+# from django.urls import path
+# from django.views.generic import RedirectView
+# from hello import views
+
+# urlpatterns = [
+#     path("", RedirectView.as_view(url='/index/0')),  # Перенаправление на первый индекс
+#     path("index/<int:id>", views.index, name="index"),
+#     path("access/<int:age>", views.access, name="access"),
+# ]
+
+
+
+
+
+
+
+
+
+
+
+
+# Отправка json
+
+
+# Задание №10
+
+
+
+
+
+from django.urls import path
+from hello import views
+  
+urlpatterns = [
+    path("", views.index),]
