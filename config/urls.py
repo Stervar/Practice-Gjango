@@ -284,13 +284,13 @@ Including another URLconf
 
 
 
-# Задание №12
+# Задание №13
 
 
-from django.urls import path
-from hello import views
+# from django.urls import path
+# from hello import views
 
-urlpatterns = [
-    path("", views.home, name="home"),
-    path("track-action/", views.track_action, name="track_action"), 
-]
+# urlpatterns = [
+#     path("", views.home, name="home"),
+#     path("track-action/", views.track_action, name="track_action"), 
+# ]

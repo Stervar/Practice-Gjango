@@ -1002,230 +1002,233 @@
 
 # Задание №13
 
+#Получение информации через cookie
+    # и полная визуализация для более удобного использования
 
-import json
-import platform
-import datetime
-import uuid
-import requests
-import logging
-import os
-import hashlib
-import traceback
-from termcolor import colored
-from django.http import JsonResponse, HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 
-class UserActivityTracker:
-    @staticmethod
-    def log_action(action_id, client_info, additional_data=None):
-        log_entry = {
-            'timestamp': datetime.datetime.now().isoformat(),
-            'action_id': action_id,
-            'client_info': client_info,
-            'additional_data': additional_data or {}
-        }
-        return log_entry
+# import json
+# import platform
+# import datetime
+# import uuid
+# import requests
+# import logging
+# import os
+# import hashlib
+# import traceback
+# from termcolor import colored
+# from django.http import JsonResponse, HttpResponse
+# from django.views.decorators.csrf import csrf_exempt
 
-def get_client_info(request):
-    # Расширенный сбор информации о клиенте
-    return {
-        'network': {
-            'ip_address': request.META.get('REMOTE_ADDR', 'Не определен'),
-            'forwarded_for': request.META.get('HTTP_X_FORWARDED_FOR', 'Отсутствует')
-        },
-        'client': {
-            'user_agent': request.META.get('HTTP_USER_AGENT', 'Не определен'),
-            'browser_info': {
-                'language': request.META.get('HTTP_ACCEPT_LANGUAGE', 'Не определен'),
-                'platform': platform.platform(),
-                'python_version': platform.python_version()
-            }
-        },
-        'system': {
-            'hostname': platform.node(),
-            'system': platform.system(),
-            'release': platform.release()
-        }
-    }
+# class UserActivityTracker:
+#     @staticmethod
+#     def log_action(action_id, client_info, additional_data=None):
+#         log_entry = {
+#             'timestamp': datetime.datetime.now().isoformat(),
+#             'action_id': action_id,
+#             'client_info': client_info,
+#             'additional_data': additional_data or {}
+#         }
+#         return log_entry
 
-def home(request):
-    # HTML с встроенной кнопкой и JavaScript
-    html_content = """
-    <!DOCTYPE html>
-    <html lang="ru">
-    <head>
-        <meta charset="UTF-8">
-        <title>Трекер активности</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                background-color: #f0f0f0;
-            }
-            .container {
-                text-align: center;
-                background-color: white;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            }
-            #trackButton {
-                background-color: #4CAF50;
-                border: none;
-                color: white;
-                padding: 15px 32px;
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 4px 2px;
-                cursor: pointer;
-                border-radius: 5px;
-                transition: background-color 0.3s;
-            }
-            #trackButton:hover {
-                background-color: #45a049;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Трекер активности пользователя</h1>
-            <button id="trackButton">Отследить действие</button>
-        </div>
+# def get_client_info(request):
+#     # Расширенный сбор информации о клиенте
+#     return {
+#         'network': {
+#             'ip_address': request.META.get('REMOTE_ADDR', 'Не определен'),
+#             'forwarded_for': request.META.get('HTTP_X_FORWARDED_FOR', 'Отсутствует')
+#         },
+#         'client': {
+#             'user_agent': request.META.get('HTTP_USER_AGENT', 'Не определен'),
+#             'browser_info': {
+#                 'language': request.META.get('HTTP_ACCEPT_LANGUAGE', 'Не определен'),
+#                 'platform': platform.platform(),
+#                 'python_version': platform.python_version()
+#             }
+#         },
+#         'system': {
+#             'hostname': platform.node(),
+#             'system': platform.system(),
+#             'release': platform.release()
+#         }
+#     }
 
-        <script>
-            document.getElementById('trackButton').addEventListener('click', function() {
-                const actionId = `action_${Date.now()}`;
+# def home(request):
+#     # HTML с встроенной кнопкой и JavaScript
+#     html_content = """
+#     <!DOCTYPE html>
+#     <html lang="ru">
+#     <head>
+#         <meta charset="UTF-8">
+#         <title>Трекер активности</title>
+#         <style>
+#             body {
+#                 font-family: Arial, sans-serif;
+#                 display: flex;
+#                 justify-content: center;
+#                 align-items: center;
+#                 height: 100vh;
+#                 margin: 0;
+#                 background-color: #f0f0f0;
+#             }
+#             .container {
+#                 text-align: center;
+#                 background-color: white;
+#                 padding: 30px;
+#                 border-radius: 10px;
+#                 box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+#             }
+#             #trackButton {
+#                 background-color: #4CAF50;
+#                 border: none;
+#                 color: white;
+#                 padding: 15px 32px;
+#                 text-align: center;
+#                 text-decoration: none;
+#                 display: inline-block;
+#                 font-size: 16px;
+#                 margin: 4px 2px;
+#                 cursor: pointer;
+#                 border-radius: 5px;
+#                 transition: background-color 0.3s;
+#             }
+#             #trackButton:hover {
+#                 background-color: #45a049;
+#             }
+#         </style>
+#     </head>
+#     <body>
+#         <div class="container">
+#             <h1>Трекер активности пользователя</h1>
+#             <button id="trackButton">Отследить действие</button>
+#         </div>
+
+#         <script>
+#             document.getElementById('trackButton').addEventListener('click', function() {
+#                 const actionId = `action_${Date.now()}`;
                 
-                const trackData = {
-                    action_id: actionId,
-                    start_time: Date.now(),
-                    additional_info: {
-                        screen_width: window.screen.width,
-                        screen_height: window.screen.height,
-                        color_depth: window.screen.colorDepth,
-                        pixel_ratio: window.devicePixelRatio,
-                        timezone_offset: new Date().getTimezoneOffset()
-                    }
-                };
+#                 const trackData = {
+#                     action_id: actionId,
+#                     start_time: Date.now(),
+#                     additional_info: {
+#                         screen_width: window.screen.width,
+#                         screen_height: window.screen.height,
+#                         color_depth: window.screen.colorDepth,
+#                         pixel_ratio: window.devicePixelRatio,
+#                         timezone_offset: new Date().getTimezoneOffset()
+#                     }
+#                 };
 
-                fetch('/track-action/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(trackData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Успешно отслежено:', data);
-                    alert(`Действие ${actionId} отслежено!\nПодробности в терминале.`);
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    alert('Произошла ошибка при отслеживании действия');
-                });
-            });
-        </script>
-    </body>
-    </html>
-    """
-    return HttpResponse(html_content)
+#                 fetch('/track-action/', {
+#                     method: 'POST',
+#                     headers: {
+#                         'Content-Type': 'application/json',
+#                     },
+#                     body: JSON.stringify(trackData)
+#                 })
+#                 .then(response => response.json())
+#                 .then(data => {
+#                     console.log('Успешно отслежено:', data);
+#                     alert(`Действие ${actionId} отслежено!\nПодробности в терминале.`);
+#                 })
+#                 .catch(error => {
+#                     console.error('Ошибка:', error);
+#                     alert('Произошла ошибка при отслеживании действия');
+#                 });
+#             });
+#         </script>
+#     </body>
+#     </html>
+#     """
+#     return HttpResponse(html_content)
 
-@csrf_exempt
-def track_action(request):
-    """
-    Расширенный обработчик для отслеживания действий пользователя с подробным логированием
-    """
-    if request.method != 'POST':
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Требуется POST-запрос'
-        }, status=405)
+# @csrf_exempt
+# def track_action(request):
+#     """
+#     Расширенный обработчик для отслеживания действий пользователя с подробным логированием
+#     """
+#     if request.method != 'POST':
+#         return JsonResponse({
+#             'status': 'error',
+#             'message': 'Требуется POST-запрос'
+#         }, status=405)
 
-    try:
-        # Парсинг входящих данных
-        data = json.loads(request.body)
-        action_id = data.get('action_id', 'Не указано')
-        start_time = data.get('start_time', 'Не указано')
-        additional_info = data.get('additional_info', {})
+#     try:
+#         # Парсинг входящих данных
+#         data = json.loads(request.body)
+#         action_id = data.get('action_id', 'Не указано')
+#         start_time = data.get('start_time', 'Не указано')
+#         additional_info = data.get('additional_info', {})
 
-        # Получение информации о клиенте
-        client_info = get_client_info(request)
+#         # Получение информации о клиенте
+#         client_info = get_client_info(request)
 
-        # Создание структуры логирования
-        log_info = {
-            'action_id': action_id,
-            'start_time': start_time,
-            'client_info': client_info,
-            'additional_info': additional_info
-        }
+#         # Создание структуры логирования
+#         log_info = {
+#             'action_id': action_id,
+#             'start_time': start_time,
+#             'client_info': client_info,
+#             'additional_info': additional_info
+#         }
 
-        # Визуальный вывод с цветовой индикацией
-        print(colored("\n🔍 ДЕТАЛЬНЫЙ АНАЛИЗ ДЕЙСТВИЯ ПОЛЬЗОВАТЕЛЯ 🔍", 'cyan', attrs=['bold']))
+#         # Визуальный вывод с цветовой индикацией
+#         print(colored("\n🔍 ДЕТАЛЬНЫЙ АНАЛИЗ ДЕЙСТВИЯ ПОЛЬЗОВАТЕЛЯ 🔍", 'cyan', attrs=['bold']))
         
-        # Базовая информация о действии
-        print(colored("\n[ДЕЙСТВИЕ]", 'green'))
-        print(f"➤ ID Действия: {colored(action_id, 'yellow')}")
-        print(f"➤ Время начала: {colored(str(datetime.datetime.fromtimestamp(int(start_time)/1000)), 'yellow')}")
+#         # Базовая информация о действии
+#         print(colored("\n[ДЕЙСТВИЕ]", 'green'))
+#         print(f"➤ ID Действия: {colored(action_id, 'yellow')}")
+#         print(f"➤ Время начала: {colored(str(datetime.datetime.fromtimestamp(int(start_time)/1000)), 'yellow')}")
         
-        # Сетевая информация
-        print(colored("\n[СЕТЕВЫЕ ПАРАМЕТРЫ]", 'green'))
-        network_info = client_info.get('network', {})
-        print(f"➤ IP-адрес: {colored(network_info.get('ip_address', 'Н/Д'), 'yellow')}")
-        print(f"➤ Переадресация: {colored(network_info.get('forwarded_for', 'Отсутствует'), 'yellow')}")
+#         # Сетевая информация
+#         print(colored("\n[СЕТЕВЫЕ ПАРАМЕТРЫ]", 'green'))
+#         network_info = client_info.get('network', {})
+#         print(f"➤ IP-адрес: {colored(network_info.get('ip_address', 'Н/Д'), 'yellow')}")
+#         print(f"➤ Переадресация: {colored(network_info.get('forwarded_for', 'Отсутствует'), 'yellow')}")
         
-        # Информация о системе
-        system_info = client_info.get('system', {})
-        print(colored("\n[СИСТЕМНАЯ ИНФОРМАЦИЯ]", 'green'))
-        print(f"➤ Хост: {colored(system_info.get('hostname', 'Н/Д'), 'yellow')}")
-        print(f"➤ Операционная система: {colored(f"{system_info.get('system', 'Н/Д')} {system_info.get('release', '')}", 'yellow')}")
+#         # Информация о системе
+#         system_info = client_info.get('system', {})
+#         print(colored("\n[СИСТЕМНАЯ ИНФОРМАЦИЯ]", 'green'))
+#         print(f"➤ Хост: {colored(system_info.get('hostname', 'Н/Д'), 'yellow')}")
+#         print(f"➤ Операционная система: {colored(f"{system_info.get('system', 'Н/Д')} {system_info.get('release', '')}", 'yellow')}")
         
-        # Информация о клиенте
-        client_details = client_info.get('client', {})
-        print(colored("\n[КЛИЕНТСКАЯ ИНФОРМАЦИЯ]", 'green'))
-        print(f"➤ User Agent: {colored(client_details.get('user_agent', 'Н/Д'), 'yellow')}")
+#         # Информация о клиенте
+#         client_details = client_info.get('client', {})
+#         print(colored("\n[КЛИЕНТСКАЯ ИНФОРМАЦИЯ]", 'green'))
+#         print(f"➤ User Agent: {colored(client_details.get('user_agent', 'Н/Д'), 'yellow')}")
         
-        # Дополнительная информация с клиента
-        print(colored("\n[ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ]", 'green'))
-        print(f"➤ Ширина экрана: {colored(str(additional_info.get('screen_width', 'Н/Д')), 'yellow')}")
-        print(f"➤ Высота экрана: {colored(str(additional_info.get('screen_height', 'Н/Д')), 'yellow')}")
-        print(f"➤ Глубина цвета: {colored(str(additional_info.get('color_depth', 'Н/Д')), 'yellow')}")
-        print(f"➤ Пиксельное соотношение: {colored(str(additional_info.get('pixel_ratio', 'Н/Д')), 'yellow')}")
-        print(f"➤ Смещение часового пояса: {colored(str(additional_info.get('timezone_offset', 'Н/Д')), 'yellow')}")
+#         # Дополнительная информация с клиента
+#         print(colored("\n[ДОПОЛНИТЕЛЬНАЯ ИНФОРМАЦИЯ]", 'green'))
+#         print(f"➤ Ширина экрана: {colored(str(additional_info.get('screen_width', 'Н/Д')), 'yellow')}")
+#         print(f"➤ Высота экрана: {colored(str(additional_info.get('screen_height', 'Н/Д')), 'yellow')}")
+#         print(f"➤ Глубина цвета: {colored(str(additional_info.get('color_depth', 'Н/Д')), 'yellow')}")
+#         print(f"➤ Пиксельное соотношение: {colored(str(additional_info.get('pixel_ratio', 'Н/Д')), 'yellow')}")
+#         print(f"➤ Смещение часового пояса: {colored(str(additional_info.get('timezone_offset', 'Н/Д')), 'yellow')}")
 
-        # Логирование действия
-        UserActivityTracker.log_action(
-            action_id=action_id, 
-            client_info=client_info, 
-            additional_data={'start_time': start_time, 'additional_info': additional_info}
-        )
+#         # Логирование действия
+#         UserActivityTracker.log_action(
+#             action_id=action_id, 
+#             client_info=client_info, 
+#             additional_data={'start_time': start_time, 'additional_info': additional_info}
+#         )
 
-        return JsonResponse({
-            'status': 'success', 
-            'message': 'Действие зафиксировано', 
-            'data': log_info
-        })
+#         return JsonResponse({
+#             'status': 'success', 
+#             'message': 'Действие зафиксировано', 
+#             'data': log_info
+#         })
 
-    except json.JSONDecodeError:
-        return JsonResponse({
-            'status': 'error',
-            'message': 'Некорректный JSON'
-        }, status=400)
+#     except json.JSONDecodeError:
+#         return JsonResponse({
+#             'status': 'error',
+#             'message': 'Некорректный JSON'
+#         }, status=400)
 
-    except Exception as e:
-        print(colored("\n❌ ОШИБКА ПРИ ОБРАБОТКЕ ДЕЙСТВИЯ ❌", 'red', attrs=['bold']))
-        print(colored(f"Тип ошибки: {type(e).__name__}", 'red'))
-        print(colored(f"Описание: {str(e)}", 'red'))
-        traceback.print_exc()
+#     except Exception as e:
+#         print(colored("\n❌ ОШИБКА ПРИ ОБРАБОТКЕ ДЕЙСТВИЯ ❌", 'red', attrs=['bold']))
+#         print(colored(f"Тип ошибки: {type(e).__name__}", 'red'))
+#         print(colored(f"Описание: {str(e)}", 'red'))
+#         traceback.print_exc()
 
-        return JsonResponse({
-            'status': 'error', 
-            'message': str(e)
-        }, status=400)
+#         return JsonResponse({
+#             'status': 'error', 
+#             'message': str(e)
+#         }, status=400)
